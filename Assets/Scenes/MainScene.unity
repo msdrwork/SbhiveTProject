@@ -981,6 +981,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatantConfigs:
   - {fileID: 11400000, guid: e77d53032e6c7744ab5ba8b05f86f7c0, type: 2}
+  - {fileID: 11400000, guid: c195a6750b99c034e86a305637785b54, type: 2}
+  - {fileID: 11400000, guid: e77d53032e6c7744ab5ba8b05f86f7c0, type: 2}
+  - {fileID: 11400000, guid: 471bfc5596befd2489b916533f20e2c1, type: 2}
+  - {fileID: 11400000, guid: 04081bd938d053f42a9b632f57f01cb0, type: 2}
+  - {fileID: 11400000, guid: 2851c85356095a9488332dbd950ca6c1, type: 2}
+  - {fileID: 11400000, guid: cb8c0172a46b38e4185227b8a9ff9135, type: 2}
   combatantsContainer: {fileID: 1582696533}
 --- !u!1 &1443642824
 GameObject:
@@ -1227,7 +1233,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efb165f7b12d4fa49a6f89166fc3a864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapTilePrefab: {fileID: 7295776098937261297, guid: 009548e8fcb369242bc0041384f2ed79, type: 3}
   mapTileContainer: {fileID: 1582696532}
 --- !u!1 &1467359332
 GameObject:
