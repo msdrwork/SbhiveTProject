@@ -25,7 +25,6 @@ public class EventManager
 
     public void AddEventListener(EventId eventId, IEventObserver observer)
     {
-        Debug.Log("ADD");
         if (eventObservers.ContainsKey(eventId))
         {
             if (eventObservers[eventId] == null)
@@ -43,7 +42,6 @@ public class EventManager
 
     public void RemoveEventListener(EventId eventId, IEventObserver eventObserver)
     {
-        Debug.Log("REMOVED");
         if (eventObservers.ContainsKey(eventId))
         {
             int idx = eventObservers[eventId].FindIndex(x => x == eventObserver);
