@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IEventObserver
 {
     [SerializeField]
     private MapManager mapManager;
@@ -16,9 +16,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        EventManager.Instance.AddEventListener(EventId.ON_START_GAME_EVENT, this);
         gameUpdateManager.Initialize();
         combatantsManager.Initialize(gameUpdateManager);
-        uiManager.Initialize(StartBattle);
+        uiManager.Initialize();
         mapManager.Initialize();
     }
 
@@ -49,4 +50,18 @@ public class GameManager : MonoBehaviour
         combatantsManager.LoadCombatants();
         combatantsManager.LoadCombatantAI();
     }
+
+    public void OnEvent(EventId eventId, object payload)
+    {
+        if (eventId == EventId.ON_START_GAME_EVENT)
+        {
+            OnStartGamePayload data = (OnStartGamePayload)payload;
+            StartBattle(data.CombatantCount);
+        }
+    }
+}
+
+public class OnStartGamePayload
+{
+    public int CombatantCount;
 }

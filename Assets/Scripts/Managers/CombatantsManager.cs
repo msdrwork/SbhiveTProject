@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class CombatantsManager : MonoBehaviour
+public class CombatantsManager : MonoBehaviour, IEventObserver
 {
     [SerializeField]
     private List<CombatantConfigSO> combatantConfigs;
@@ -21,12 +21,12 @@ public class CombatantsManager : MonoBehaviour
     private Dictionary<int, StateMachine<CombatantState>> combatantStateMachines;
 
     private CombatConfiguration currentCombatConfig;
-    private bool isLoading;
 
     private GameUpdateManager gameUpdateManager;
 
     public void Initialize(GameUpdateManager gameUpdateManager)
     {
+        EventManager.Instance.AddEventListener(EventId.ON_COMBATANT_DEAD_EVENT, this);
         combatants = new Dictionary<int, Combatant>();
         combatantStateMachines = new Dictionary<int, StateMachine<CombatantState>>();
         this.gameUpdateManager = gameUpdateManager;
@@ -46,6 +46,11 @@ public class CombatantsManager : MonoBehaviour
             Combatant newCombatant = Instantiate(combatantPrefab, combatantsContainer);
             newCombatant.Initialize(i, combatantConfigs[Random.Range(0, combatantConfigs.Count)]);
             newCombatant.transform.position = new Vector2(Random.Range(0f, 10f), Random.Range(0f, 10f));
+            EventManager.Instance.SendEvent(EventId.ON_COMBATANT_CREATED_EVENT,
+                new OnCombatantCreatedPayload()
+                {
+                    Combatant = newCombatant,
+                });
             combatants.Add(i, newCombatant);
         }
     }
@@ -78,5 +83,41 @@ public class CombatantsManager : MonoBehaviour
             combatantStateMachine.ChangeState(CombatantState.Idle);
             combatantStateMachine.SetActive(true);
         }
+    }
+
+    public void OnEvent(EventId eventId, object payload)
+    {
+        if (eventId == EventId.ON_COMBATANT_DEAD_EVENT)
+        {
+            int aliveCombantantCount = BattleUtils.GetAliveCombatantsCount(combatants);
+
+            if (aliveCombantantCount == 1)
+            {
+                int winningCombatantId = BattleUtils.GetWinningCombatantId(combatants);
+
+                if (winningCombatantId != -1)
+                {
+                    EventManager.Instance.SendEvent(EventId.ON_COMBATANT_WIN_EVENT,
+                        new OnCombatantWinPayload()
+                        {
+                            Combatant = combatants[winningCombatantId],
+                        });
+                }
+                else
+                {
+                    EventManager.Instance.SendEvent(EventId.ON_ALL_COMBATANT_DEAD_EVENT, null);
+                }
+
+            }
+            else if (aliveCombantantCount <= 0)
+            {
+                EventManager.Instance.SendEvent(EventId.ON_ALL_COMBATANT_DEAD_EVENT, null);
+            }
+        }
+    }
+
+    public void Destroy()
+    {
+        EventManager.Instance.RemoveEventListener(EventId.ON_COMBATANT_DEAD_EVENT, this);
     }
 }
