@@ -62,7 +62,6 @@ public class CombatantsManager : MonoBehaviour, IEventObserver
         for (int i = 0; i < combatants.Count; i++)
         {
             Combatant combatant = combatants[i];
-            combatant.DebugPlayers(combatants);
             StateMachine<CombatantState> combatantStateMachine = new StateMachine<CombatantState>();
             combatantStateMachine.AddState(CombatantState.Idle, new IdleState(combatant, combatantStateMachine));
             combatantStateMachine.AddState(CombatantState.PickingTarget, new PickingTargetState(combatant, combatants, combatantStateMachine));
