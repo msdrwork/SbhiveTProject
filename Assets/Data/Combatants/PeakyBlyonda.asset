@@ -15,5 +15,5 @@ MonoBehaviour:
   gameSprite: {fileID: 5006946705111556243, guid: 789cb70abd62fe8448c9d6459e45fa31, type: 3}
   Name: Peaky
   MoveSpeed: 1
-  Health: 10
+  Health: 25
   weaponConfig: {fileID: 11400000, guid: 2890e299b2030e649bd898107e4c440f, type: 2}

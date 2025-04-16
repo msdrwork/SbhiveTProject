@@ -15,5 +15,5 @@ MonoBehaviour:
   gameSprite: {fileID: -2231885273710382416, guid: 789cb70abd62fe8448c9d6459e45fa31, type: 3}
   Name: Astro
   MoveSpeed: 2
-  Health: 10
+  Health: 25
   weaponConfig: {fileID: 11400000, guid: 5e678499bad7bdc4f8eb987469b07c8e, type: 2}

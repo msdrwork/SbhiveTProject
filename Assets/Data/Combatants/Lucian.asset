@@ -15,5 +15,5 @@ MonoBehaviour:
   gameSprite: {fileID: 7316185122105415144, guid: 789cb70abd62fe8448c9d6459e45fa31, type: 3}
   Name: Lucian
   MoveSpeed: 1
-  Health: 5
+  Health: 22
   weaponConfig: {fileID: 11400000, guid: 5e678499bad7bdc4f8eb987469b07c8e, type: 2}
