@@ -58,7 +58,7 @@ public class UIManager : MonoBehaviour, IEventObserver
     private void OnResetClicked()
     {
         ShowMenu(true);
-        ShowGameScreen(false);       
+        ShowGameScreen(false);
         ClearCombatantCounter();
         winScreen.gameObject.SetActive(false);
         inputField.text = string.Empty;
@@ -73,9 +73,10 @@ public class UIManager : MonoBehaviour, IEventObserver
         startButton.enabled = false;
         ShowMenu(false);
         ShowGameScreen(true);
+        int combatantCount = inputField.text == string.Empty ? 10 : int.Parse(inputField.text);
         EventManager.Instance.SendEvent(EventId.ON_START_GAME_EVENT, new OnStartGamePayload()
         {
-            CombatantCount = int.Parse(inputField.text),
+            CombatantCount = combatantCount > 1 ? combatantCount : 10,
         });
     }
 
