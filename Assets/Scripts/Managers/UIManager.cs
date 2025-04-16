@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour, IEventObserver
 
         resetButton.onClick.AddListener(OnResetClicked);
         startButton.onClick.AddListener(OnStartClicked);
-        combatantCount = 0;
+        combatantCount = 10;
 
         combatantTrackerUIControllers = new List<CombatantTrackerUIController>();
     }
