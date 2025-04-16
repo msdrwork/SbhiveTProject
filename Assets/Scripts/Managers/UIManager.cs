@@ -58,10 +58,14 @@ public class UIManager : MonoBehaviour, IEventObserver
     private void OnResetClicked()
     {
         ShowMenu(true);
-        ShowGameScreen(false);
+        ShowGameScreen(false);       
         ClearCombatantCounter();
+        winScreen.gameObject.SetActive(false);
         inputField.text = string.Empty;
         startButton.enabled = true;
+        combatantCount = 0;
+
+        EventManager.Instance.SendEvent(EventId.ON_RESET_GAME_EVENT, null);
     }
 
     private void OnStartClicked()
@@ -82,7 +86,7 @@ public class UIManager : MonoBehaviour, IEventObserver
         gameCanvasGroup.interactable = isShow;
     }
 
-    private void ShowMenu(bool isShow)
+    public void ShowMenu(bool isShow)
     {
         menuCanvasGroup.alpha = isShow ? 1 : 0;
         menuCanvasGroup.blocksRaycasts = isShow;

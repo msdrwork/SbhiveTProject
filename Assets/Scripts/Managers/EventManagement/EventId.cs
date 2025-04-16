@@ -3,6 +3,7 @@
     TEST_EVENT,
     
     ON_START_GAME_EVENT,            // OnStartGamePayload: When the sim is triggered to begin
+    ON_RESET_GAME_EVENT,            // null: Activated when the game reset button is triggered
 
     // Combatant Events
     ON_COMBATANT_CREATED_EVENT,     // OnCombatantCreatedPayload: When a combatant is spawned

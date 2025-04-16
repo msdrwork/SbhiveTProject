@@ -166,24 +166,12 @@ public class Combatant : MonoBehaviour
     {
         Vector2 dir = (transform.position - targetVector).normalized;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        angle += 90; // adjustment since sprite is looking to the north
+        angle += 90f; // adjustment since sprite is looking to the north
         rotationPivot.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
-    // DEBUGGING - DELETE ME =============
-    Dictionary<int, Combatant> combatants;
-    public void DebugPlayers(Dictionary<int, Combatant> combatants)
+    public void Destroy()
     {
-        this.combatants = combatants;
+        Destroy(gameObject);
     }
-
-    private void Update()
-    {
-        if (currentTargetId != -1)
-        {
-            Debug.DrawLine(this.transform.position, combatants[currentTargetId].transform.position, Color.green);
-        }
-        nameTxt.text = currentState.ToString() + " Health: " + health.ToString();
-    }
-    // DEBUGGING - DELETE ME ================
 }

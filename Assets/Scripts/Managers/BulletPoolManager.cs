@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class BulletPoolManager : MonoBehaviour
@@ -28,16 +29,17 @@ public class BulletPoolManager : MonoBehaviour
     {
         bulletPrefabRef = Resources.Load<Bullet>("Prefabs/Bullet");
         bulletPool = new List<Bullet>();
-        CreateInitialBullets();
+        StartCoroutine(CreateInitialBullets());
     }
 
-    private void CreateInitialBullets()
+    private IEnumerator CreateInitialBullets()
     {
         for (int i = 0; i < initialPoolSize; i++)
         {
             Bullet createdBullet = Instantiate(bulletPrefabRef, transform);
             createdBullet.gameObject.SetActive(false);
             bulletPool.Add(createdBullet);
+            yield return null;
         }
     }
 

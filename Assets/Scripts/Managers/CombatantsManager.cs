@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class CombatantsManager : MonoBehaviour, IEventObserver
@@ -27,6 +28,7 @@ public class CombatantsManager : MonoBehaviour, IEventObserver
     public void Initialize(GameUpdateManager gameUpdateManager)
     {
         EventManager.Instance.AddEventListener(EventId.ON_COMBATANT_DEAD_EVENT, this);
+        EventManager.Instance.AddEventListener(EventId.ON_RESET_GAME_EVENT, this);
         combatants = new Dictionary<int, Combatant>();
         combatantStateMachines = new Dictionary<int, StateMachine<CombatantState>>();
         this.gameUpdateManager = gameUpdateManager;
@@ -37,8 +39,7 @@ public class CombatantsManager : MonoBehaviour, IEventObserver
         this.currentCombatConfig = combatConfig;
     }
 
-    // TODO: (ADR) If theres time, convert this into a pool.
-    public void LoadCombatants()
+    public IEnumerator LoadCombatants()
     {
         Combatant combatantPrefab = Resources.Load<Combatant>("Prefabs/Combatant");
         for (int i = 0; i < currentCombatConfig.CombatantCount; i++)
@@ -52,6 +53,7 @@ public class CombatantsManager : MonoBehaviour, IEventObserver
                     Combatant = newCombatant,
                 });
             combatants.Add(i, newCombatant);
+            yield return null;
         }
     }
 
@@ -90,7 +92,6 @@ public class CombatantsManager : MonoBehaviour, IEventObserver
         if (eventId == EventId.ON_COMBATANT_DEAD_EVENT)
         {
             int aliveCombantantCount = BattleUtils.GetAliveCombatantsCount(combatants);
-
             if (aliveCombantantCount == 1)
             {
                 int winningCombatantId = BattleUtils.GetWinningCombatantId(combatants);
@@ -114,10 +115,28 @@ public class CombatantsManager : MonoBehaviour, IEventObserver
                 EventManager.Instance.SendEvent(EventId.ON_ALL_COMBATANT_DEAD_EVENT, null);
             }
         }
+        else if (eventId == EventId.ON_RESET_GAME_EVENT)
+        {
+            foreach (int key in combatants.Keys)
+            {
+                combatants[key].Destroy();
+            }
+
+            foreach (int key in combatantStateMachines.Keys)
+            {
+                StateMachine<CombatantState> combatantStateMachine = combatantStateMachines[key];
+                gameUpdateManager.RemoveUpdateable(combatantStateMachine);
+                combatantStateMachine.Destroy();
+            }
+
+            combatants.Clear();
+            combatantStateMachines.Clear();
+        }
     }
 
     public void Destroy()
     {
         EventManager.Instance.RemoveEventListener(EventId.ON_COMBATANT_DEAD_EVENT, this);
+        EventManager.Instance.RemoveEventListener(EventId.ON_RESET_GAME_EVENT, this);
     }
 }

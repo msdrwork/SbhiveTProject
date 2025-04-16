@@ -57,6 +57,8 @@ public class StateMachine<TState> : IUpdateable where TState : Enum
 
     public void Destroy()
     {
+        isActive = false;
         States.Clear();
+        currentState = null;
     }
 }

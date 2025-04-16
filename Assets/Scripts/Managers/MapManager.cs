@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
-public class MapManager : MonoBehaviour
+public class MapManager : MonoBehaviour, IEventObserver
 {
     [SerializeField]
     private GameObject mapTileContainer;
@@ -11,6 +12,7 @@ public class MapManager : MonoBehaviour
 
     public void Initialize()
     {
+        EventManager.Instance.AddEventListener(EventId.ON_RESET_GAME_EVENT, this);
         mapTiles = new List<GameObject>();
     }
 
@@ -20,7 +22,7 @@ public class MapManager : MonoBehaviour
     }
 
     // TODO: (ADR) If theres time, convert this into a map maker
-    public void LoadMapTiles()
+    public IEnumerator LoadMapTiles()
     {
         for (int y = 0; y < mapConfig.MapSizeY; y++)
         {
@@ -30,6 +32,24 @@ public class MapManager : MonoBehaviour
                 mapTile.transform.position = new Vector3(x, y, 0);
                 mapTiles.Add(mapTile);
             }
+        }
+        yield return null;
+    }
+
+    public void ClearMapTiles()
+    {
+        for (int i = 0; i < mapTiles.Count; i++)
+        {
+            Destroy(mapTiles[i].gameObject);
+        }
+        mapTiles.Clear();
+    }
+
+    public void OnEvent(EventId eventId, object payload)
+    {
+        if (eventId == EventId.ON_RESET_GAME_EVENT)
+        {
+            ClearMapTiles();
         }
     }
 }

@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour, IEventObserver
 {
@@ -24,31 +26,33 @@ public class GameManager : MonoBehaviour, IEventObserver
         mapManager.Initialize();
     }
 
-    private void StartBattle(int combatantCount)
+    private IEnumerator StartBattle(int combatantCount)
     {
         gameUpdateManager.Pause();
-        LoadMap();
-        LoadCombatants(combatantCount);
+        uiManager.ShowMenu(false);
         uiManager.ShowLoading(true);
+        yield return LoadMap();
+        yield return LoadCombatants(combatantCount);
+        uiManager.ShowLoading(false);
         combatantsManager.ActivateCombatants();
         gameUpdateManager.Play();
     }
 
-    private void LoadMap()
+    private IEnumerator LoadMap()
     {
         MapConfiguration newMapConfig = new MapConfiguration();
         newMapConfig.MapSizeX = 10;
         newMapConfig.MapSizeY = 10;
         mapManager.SetMapConfiguration(newMapConfig);
-        mapManager.LoadMapTiles();
+        yield return mapManager.LoadMapTiles();
     }
 
-    private void LoadCombatants(int combatantCount)
+    private IEnumerator LoadCombatants(int combatantCount)
     {
         CombatConfiguration combatConfiguration = new CombatConfiguration();
         combatConfiguration.CombatantCount = combatantCount;
         combatantsManager.SetCombatConfiguration(combatConfiguration);
-        combatantsManager.LoadCombatants();
+        yield return combatantsManager.LoadCombatants();
         combatantsManager.LoadCombatantAI();
     }
 
@@ -57,7 +61,7 @@ public class GameManager : MonoBehaviour, IEventObserver
         if (eventId == EventId.ON_START_GAME_EVENT)
         {
             OnStartGamePayload data = (OnStartGamePayload)payload;
-            StartBattle(data.CombatantCount);
+            StartCoroutine(StartBattle(data.CombatantCount));
         }
     }
 }

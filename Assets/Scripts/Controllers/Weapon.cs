@@ -70,6 +70,7 @@ public class Weapon : MonoBehaviour
             createdBullet = BulletPoolManager.Instance.GetBullet();
             createdBullet.transform.SetParent(bulletSpawnPoint);
             createdBullet.transform.localPosition = Vector2.zero;
+            createdBullet.transform.SetParent(BulletPoolManager.Instance.transform);
             createdBullet.Initialize(weaponConfig.bulletConfig, targetDir, onBulletHit);
             createdBullet.FireBullet();
         }
