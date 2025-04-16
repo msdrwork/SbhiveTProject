@@ -146,7 +146,7 @@ public class Combatant : MonoBehaviour
             {
                 CombatantId = combatantId,
             });
-            //gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 

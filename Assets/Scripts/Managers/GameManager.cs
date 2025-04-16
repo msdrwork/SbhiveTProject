@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour, IEventObserver
     private void Start()
     {
         EventManager.Instance.AddEventListener(EventId.ON_START_GAME_EVENT, this);
+        BulletPoolManager.Instance.Initialize();
         gameUpdateManager.Initialize();
         combatantsManager.Initialize(gameUpdateManager);
         uiManager.Initialize();
@@ -26,7 +27,7 @@ public class GameManager : MonoBehaviour, IEventObserver
     private void StartBattle(int combatantCount)
     {
         gameUpdateManager.Pause();
-        //LoadMap();
+        LoadMap();
         LoadCombatants(combatantCount);
         uiManager.ShowLoading(true);
         combatantsManager.ActivateCombatants();

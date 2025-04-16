@@ -62,17 +62,18 @@ public class Weapon : MonoBehaviour
         isReloading = false;
     }
 
-    // TODO: (ADR) Pool if you have time
     private Bullet CreateBullet(Vector2 targetDir, UnityAction<float> onBulletHit)
     {
-        if (bulletPrefabRef == null)
+        Bullet createdBullet = null;
+        if (BulletPoolManager.Instance != null)
         {
-            bulletPrefabRef = Resources.Load<Bullet>("Prefabs/Bullet");
+            createdBullet = BulletPoolManager.Instance.GetBullet();
+            createdBullet.transform.SetParent(bulletSpawnPoint);
+            createdBullet.transform.localPosition = Vector2.zero;
+            createdBullet.Initialize(weaponConfig.bulletConfig, targetDir, onBulletHit);
+            createdBullet.FireBullet();
         }
 
-        Bullet createdBullet = Instantiate(bulletPrefabRef, bulletSpawnPoint);
-        createdBullet.Initialize(weaponConfig.bulletConfig, targetDir, onBulletHit);
-        createdBullet.FireBullet();
         return createdBullet;
     }
 }
