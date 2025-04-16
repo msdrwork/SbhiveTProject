@@ -27,7 +27,6 @@ public class ShootingState : State<CombatantState>
         combatant.Shoot(targetCombatant);
         combatant.SetState(CombatantState.PrepareAttack);
         stateMachine.ChangeState(CombatantState.PrepareAttack);
-
     }
 
     public override void OnUpdate()

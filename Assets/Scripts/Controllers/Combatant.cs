@@ -1,17 +1,24 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 
 public class Combatant : MonoBehaviour
 {
     [SerializeField]
+    private Transform rotationPivot;
+
+    [SerializeField]
     private SpriteRenderer spriteRenderer;
 
     [SerializeField]
-    private TextMeshProUGUI stateTxt;
+    private TextMeshProUGUI nameTxt;
 
     [SerializeField]
     private Transform weaponContainer;
+
+    [SerializeField]
+    private Image healthBarFill;
 
     private CombatantState currentState;
     public CombatantState CurrentState
@@ -41,7 +48,8 @@ public class Combatant : MonoBehaviour
         }
     }
 
-    private float health = 3f;
+    private float maxHealth;
+    private float health;
     public float Health
     {
         get
@@ -50,7 +58,7 @@ public class Combatant : MonoBehaviour
         }
     }
 
-    private float moveSpeed = 1f;
+    private float moveSpeed;
     public float MoveSpeed
     {
         get
@@ -77,15 +85,29 @@ public class Combatant : MonoBehaviour
         }
     }
 
+    private Sprite combatantSprite;
+    public Sprite CombatantSprite
+    {
+        get
+        {
+            return combatantSprite;
+        }
+    }
+
     public void Initialize(int combatantId, CombatantConfigSO combatantConfig)
     {
         this.combatantId = combatantId;
+        maxHealth = combatantConfig.Health;
         health = combatantConfig.Health;
         moveSpeed = combatantConfig.MoveSpeed;
         combatantName = combatantConfig.Name;
-        spriteRenderer.sprite = combatantConfig.gameSprite;
+        combatantSprite = combatantConfig.gameSprite;
         CreateWeapon(combatantConfig.weaponConfig);
         currentTargetId = -1;
+
+        nameTxt.text = combatantName;
+        healthBarFill.fillAmount = 1f;
+        spriteRenderer.sprite = combatantSprite;
     }
 
     private void CreateWeapon(WeaponConfigSO weaponConfig)
@@ -108,12 +130,23 @@ public class Combatant : MonoBehaviour
     {
         health -= damage;
 
-        // TODO: (ADR)(POLISH) Add red animation        
+        UIUtils.UpdateHealthBar(healthBarFill, health, maxHealth);
+        EventManager.Instance.SendEvent(EventId.ON_COMBATANT_DAMAGED_EVENT,
+            new OnCombatantDamagedPayload()
+            {
+                CombatantId = combatantId,
+                healthPercentage = health / maxHealth,
+            });
 
-        if (health <= 0)
+        if (health <= 0 && currentState != CombatantState.Death)
         {
             currentState = CombatantState.Death;
-            gameObject.SetActive(false);
+            EventManager.Instance.SendEvent(EventId.ON_COMBATANT_DEAD_EVENT,
+            new OnCombatantDeadPayload()
+            {
+                CombatantId = combatantId,
+            });
+            //gameObject.SetActive(false);
         }
     }
 
@@ -133,9 +166,11 @@ public class Combatant : MonoBehaviour
     {
         Vector2 dir = (transform.position - targetVector).normalized;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle - 270);
+        angle += 90; // adjustment since sprite is looking to the north
+        rotationPivot.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
+    // DEBUGGING - DELETE ME =============
     Dictionary<int, Combatant> combatants;
     public void DebugPlayers(Dictionary<int, Combatant> combatants)
     {
@@ -148,6 +183,7 @@ public class Combatant : MonoBehaviour
         {
             Debug.DrawLine(this.transform.position, combatants[currentTargetId].transform.position, Color.green);
         }
-        stateTxt.text = currentState.ToString() + " Health: " + health.ToString();
+        nameTxt.text = currentState.ToString() + " Health: " + health.ToString();
     }
+    // DEBUGGING - DELETE ME ================
 }
