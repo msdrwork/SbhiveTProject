@@ -62,4 +62,39 @@ public static class BattleUtils
 
         return randomCombatantId;
     }
+
+    // Finds a random combatant that is still alive
+    public static int GetAliveCombatantsCount(Dictionary<int, Combatant> allCombatants)
+    {
+        List<Combatant> aliveCombatants = new List<Combatant>();
+
+        for (int i = 0; i < allCombatants.Count; i++)
+        {
+            Combatant combatant = allCombatants[i];
+            if (combatant.CurrentState != CombatantState.Death)
+            {
+                aliveCombatants.Add(combatant);
+            }
+        }
+
+        return aliveCombatants.Count;
+    }
+
+    // Finds a random combatant that is still alive
+    public static int GetWinningCombatantId(Dictionary<int, Combatant> allCombatants)
+    {
+        int winningCombatantId = -1;
+
+        for (int i = 0; i < allCombatants.Count; i++)
+        {
+            Combatant combatant = allCombatants[i];
+            if (combatant.CurrentState != CombatantState.Death)
+            {
+                winningCombatantId = combatant.CombatantId;
+                break;
+            }
+        }
+
+        return winningCombatantId;
+    }
 }
